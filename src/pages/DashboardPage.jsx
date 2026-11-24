@@ -7,6 +7,7 @@ import { DiscoverSection } from '../components/dashboard/DiscoverSection'
 import { OpportunitiesSection } from '../components/dashboard/OpportunitiesSection'
 import { CollaborationsSection } from '../components/dashboard/CollaborationsSection'
 import { MessagesSection } from '../components/dashboard/MessagesSection'
+import { AiStudioSection } from '../components/dashboard/AiStudioSection'
 import {
   LayoutDashboard,
   User,
@@ -15,6 +16,7 @@ import {
   Sparkles,
   Users,
   MessageSquare,
+  Bot,
   Settings,
   LogOut,
   ArrowLeft,
@@ -72,6 +74,7 @@ export function DashboardPage({ user, onNavigate, onLogout }) {
 
   const navItems = [
     { id: 'overview', label: 'Overview', icon: LayoutDashboard },
+    { id: 'ai', label: 'ArtNova AI', icon: Bot, badge: 'AI' },
     { id: 'profile', label: 'My Profile', icon: User },
     { id: 'portfolio', label: 'My Portfolio', icon: Image },
     { id: 'discover', label: 'Discover Artists', icon: Compass },
@@ -164,13 +167,25 @@ export function DashboardPage({ user, onNavigate, onLogout }) {
                 <button
                   key={item.id}
                   onClick={() => handleTabClick(item.id)}
-                  className={`w-full px-3.5 py-2.5 rounded-xl text-xs font-medium flex items-center gap-3 transition-all cursor-pointer ${isActive
+                  className={`w-full px-3.5 py-2.5 rounded-xl text-xs font-medium flex items-center justify-between transition-all cursor-pointer ${isActive
                       ? 'bg-gradient-to-r from-[#8B5CF6] to-[#7C3AED] text-white shadow-[0_0_20px_rgba(139,92,246,0.3)]'
                       : 'text-[#9490A8] hover:text-white hover:bg-white/5'
                     }`}
                 >
-                  <Icon className="w-4 h-4 shrink-0" />
-                  <span>{item.label}</span>
+                  <span className="flex items-center gap-3">
+                    <Icon className="w-4 h-4 shrink-0" />
+                    <span>{item.label}</span>
+                  </span>
+                  {item.badge && (
+                    <span
+                      className={`text-[9px] font-bold px-1.5 py-0.5 rounded-md ${isActive
+                          ? 'bg-white/20 text-white'
+                          : 'bg-[#8B5CF6]/20 text-[#A78BFA] border border-[#8B5CF6]/30'
+                        }`}
+                    >
+                      {item.badge}
+                    </span>
+                  )}
                 </button>
               )
             })}
@@ -290,19 +305,19 @@ export function DashboardPage({ user, onNavigate, onLogout }) {
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                 <div
-                  onClick={() => handleTabClick('profile')}
-                  className="p-6 rounded-2xl bg-[#171725] border border-[#8B5CF6]/15 hover:border-[#8B5CF6]/40 transition-all cursor-pointer group"
+                  onClick={() => handleTabClick('ai')}
+                  className="p-6 rounded-2xl bg-[#171725] border border-[#8B5CF6]/30 hover:border-[#8B5CF6]/60 transition-all cursor-pointer group"
                 >
-                  <div className="w-10 h-10 rounded-xl bg-[#8B5CF6]/10 border border-[#8B5CF6]/20 flex items-center justify-center text-[#A78BFA] group-hover:bg-[#8B5CF6] group-hover:text-white transition-all mb-4">
-                    <User className="w-5 h-5" />
+                  <div className="w-10 h-10 rounded-xl bg-[#8B5CF6]/15 border border-[#8B5CF6]/30 flex items-center justify-center text-[#A78BFA] group-hover:bg-[#8B5CF6] group-hover:text-white transition-all mb-4">
+                    <Bot className="w-5 h-5" />
                   </div>
                   <h3 className="text-base font-bold text-white font-['Outfit'] mb-1.5">
-                    Edit Creator Profile
+                    ArtNova AI Matchmaker
                   </h3>
                   <p className="text-xs text-[#9490A8] leading-relaxed mb-4">
-                    Update your creative disciplines, experience level, tools, and collaboration interests.
+                    Describe your project and let Gemini AI match you with the right creators and draft pitches.
                   </p>
-                  <span className="text-xs font-semibold text-[#A78BFA]">Open Profile Setup -&gt;</span>
+                  <span className="text-xs font-semibold text-[#A78BFA]">Launch AI Studio -&gt;</span>
                 </div>
 
                 <div
@@ -343,14 +358,18 @@ export function DashboardPage({ user, onNavigate, onLogout }) {
               <Database className="w-5 h-5 text-[#8B5CF6] shrink-0 mt-0.5" />
               <div>
                 <span className="text-white font-semibold block mb-0.5">
-                  Phase 11: Full ArtNova Platform Live
+                  Phase 13: ArtNova AI Studio Active
                 </span>
                 <span>
-                  All 8 creator modules—Profiles, Portfolio Uploads, Artist Discovery, Open Opportunities, Collaborations, Direct Messaging, and Settings—are connected to Supabase.
+                  AI Collaborator Matchmaking and Creative Guidance are live. Pro Subscriptions are up next in Phase 14.
                 </span>
               </div>
             </div>
           </div>
+        )}
+
+        {activeTab === 'ai' && (
+          <AiStudioSection user={user} onNavigateTab={handleTabClick} />
         )}
 
         {activeTab === 'profile' && <ProfileSection user={user} />}
