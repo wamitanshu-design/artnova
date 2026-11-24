@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Button } from '../components/ui/Button'
 import { supabase } from '../lib/supabase'
+import { GoogleAuthButton } from '../components/ui/GoogleAuthButton'
 import {
   Eye,
   EyeOff,
@@ -132,13 +133,27 @@ export function SignUpPage({ onNavigate }) {
       <div className="max-w-md w-full mx-auto">
         <div className="bg-[#171725] border border-[#8B5CF6]/20 rounded-2xl p-6 sm:p-8 shadow-xl">
           {/* Header */}
-          <div className="text-center mb-8">
+          <div className="text-center mb-6">
             <h1 className="text-2xl sm:text-3xl font-extrabold text-[#F4F0FF] font-['Outfit'] mb-2">
               Create an Account
             </h1>
             <p className="text-xs sm:text-sm text-[#9490A8]">
               Join ArtNova to connect with fellow creators
             </p>
+          </div>
+
+          {/* Google Sign-Up Button & Divider */}
+          <GoogleAuthButton label="Continue with Google" />
+
+          <div className="relative my-5">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-[#8B5CF6]/20" />
+            </div>
+            <div className="relative flex justify-center text-[11px] uppercase">
+              <span className="bg-[#171725] px-3 text-[#9490A8]">
+                or continue with email
+              </span>
+            </div>
           </div>
 
           {/* Sign Up Form */}
@@ -160,11 +175,10 @@ export function SignUpPage({ onNavigate }) {
                     if (errors.fullName) setErrors({ ...errors, fullName: null })
                   }}
                   placeholder="e.g. Alex Morgan"
-                  className={`w-full pl-10 pr-4 py-2.5 bg-[#101019] border rounded-xl text-white placeholder-[#9490A8]/50 focus:outline-none text-xs transition-colors disabled:opacity-50 ${
-                    errors.fullName
-                      ? 'border-rose-500/70 focus:border-rose-500'
-                      : 'border-[#8B5CF6]/20 focus:border-[#8B5CF6]'
-                  }`}
+                  className={`w-full pl-10 pr-4 py-2.5 bg-[#101019] border rounded-xl text-white placeholder-[#9490A8]/50 focus:outline-none text-xs transition-colors disabled:opacity-50 ${errors.fullName
+                    ? 'border-rose-500/70 focus:border-rose-500'
+                    : 'border-[#8B5CF6]/20 focus:border-[#8B5CF6]'
+                    }`}
                 />
               </div>
               {errors.fullName && (
@@ -192,11 +206,10 @@ export function SignUpPage({ onNavigate }) {
                     if (errors.email) setErrors({ ...errors, email: null })
                   }}
                   placeholder="your.email@domain.com"
-                  className={`w-full pl-10 pr-4 py-2.5 bg-[#101019] border rounded-xl text-white placeholder-[#9490A8]/50 focus:outline-none text-xs transition-colors disabled:opacity-50 ${
-                    errors.email
-                      ? 'border-rose-500/70 focus:border-rose-500'
-                      : 'border-[#8B5CF6]/20 focus:border-[#8B5CF6]'
-                  }`}
+                  className={`w-full pl-10 pr-4 py-2.5 bg-[#101019] border rounded-xl text-white placeholder-[#9490A8]/50 focus:outline-none text-xs transition-colors disabled:opacity-50 ${errors.email
+                    ? 'border-rose-500/70 focus:border-rose-500'
+                    : 'border-[#8B5CF6]/20 focus:border-[#8B5CF6]'
+                    }`}
                 />
               </div>
               {errors.email && (
@@ -224,11 +237,10 @@ export function SignUpPage({ onNavigate }) {
                     if (errors.password) setErrors({ ...errors, password: null })
                   }}
                   placeholder="At least 6 characters"
-                  className={`w-full pl-10 pr-10 py-2.5 bg-[#101019] border rounded-xl text-white placeholder-[#9490A8]/50 focus:outline-none text-xs transition-colors disabled:opacity-50 ${
-                    errors.password
-                      ? 'border-rose-500/70 focus:border-rose-500'
-                      : 'border-[#8B5CF6]/20 focus:border-[#8B5CF6]'
-                  }`}
+                  className={`w-full pl-10 pr-10 py-2.5 bg-[#101019] border rounded-xl text-white placeholder-[#9490A8]/50 focus:outline-none text-xs transition-colors disabled:opacity-50 ${errors.password
+                    ? 'border-rose-500/70 focus:border-rose-500'
+                    : 'border-[#8B5CF6]/20 focus:border-[#8B5CF6]'
+                    }`}
                 />
                 <button
                   type="button"
@@ -269,11 +281,10 @@ export function SignUpPage({ onNavigate }) {
                       setErrors({ ...errors, confirmPassword: null })
                   }}
                   placeholder="Re-enter your password"
-                  className={`w-full pl-10 pr-10 py-2.5 bg-[#101019] border rounded-xl text-white placeholder-[#9490A8]/50 focus:outline-none text-xs transition-colors disabled:opacity-50 ${
-                    errors.confirmPassword
-                      ? 'border-rose-500/70 focus:border-rose-500'
-                      : 'border-[#8B5CF6]/20 focus:border-[#8B5CF6]'
-                  }`}
+                  className={`w-full pl-10 pr-10 py-2.5 bg-[#101019] border rounded-xl text-white placeholder-[#9490A8]/50 focus:outline-none text-xs transition-colors disabled:opacity-50 ${errors.confirmPassword
+                    ? 'border-rose-500/70 focus:border-rose-500'
+                    : 'border-[#8B5CF6]/20 focus:border-[#8B5CF6]'
+                    }`}
                 />
                 <button
                   type="button"

@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Button } from '../components/ui/Button'
+import { GoogleAuthButton } from '../components/ui/GoogleAuthButton'
 import { supabase } from '../lib/supabase'
 import {
   Eye,
@@ -148,7 +149,7 @@ export function LoginPage({ onNavigate }) {
       <div className="max-w-md w-full mx-auto">
         <div className="bg-[#171725] border border-[#8B5CF6]/20 rounded-2xl p-6 sm:p-8 shadow-xl">
           {/* Header */}
-          <div className="text-center mb-8">
+          <div className="text-center mb-6">
             <h1 className="text-2xl sm:text-3xl font-extrabold text-[#F4F0FF] font-['Outfit'] mb-2">
               Welcome Back
             </h1>
@@ -251,167 +252,181 @@ export function LoginPage({ onNavigate }) {
               )}
             </div>
           ) : (
-            /* Login Form */
-            <form onSubmit={handleSubmit} noValidate className="space-y-5">
-              {/* Email Address */}
-              <div>
-                <label className="block text-xs font-semibold text-[#A78BFA] uppercase tracking-wider mb-1.5">
-                  Email Address
-                </label>
-                <div className="relative">
-                  <Mail className="w-4 h-4 text-[#9490A8] absolute left-3.5 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="email"
-                    name="email"
-                    disabled={isLoading}
-                    value={formData.email}
-                    onChange={(e) => {
-                      setFormData({ ...formData, email: e.target.value })
-                      if (errors.email) setErrors({ ...errors, email: null })
-                    }}
-                    placeholder="your.email@domain.com"
-                    className={`w-full pl-10 pr-4 py-2.5 bg-[#101019] border rounded-xl text-white placeholder-[#9490A8]/50 focus:outline-none text-xs transition-colors disabled:opacity-50 ${
-                      errors.email
-                        ? 'border-rose-500/70 focus:border-rose-500'
-                        : 'border-[#8B5CF6]/20 focus:border-[#8B5CF6]'
-                    }`}
-                  />
+            <>
+              {/* Google Sign-In Button & Divider */}
+              <GoogleAuthButton label="Continue with Google" />
+
+              <div className="relative my-5">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-[#8B5CF6]/20" />
                 </div>
-                {errors.email && (
-                  <p className="text-[11px] text-rose-400 mt-1 flex items-center gap-1">
-                    <AlertCircle className="w-3 h-3 shrink-0" />
-                    {errors.email}
-                  </p>
-                )}
+                <div className="relative flex justify-center text-[11px] uppercase">
+                  <span className="bg-[#171725] px-3 text-[#9490A8]">
+                    or continue with email
+                  </span>
+                </div>
               </div>
 
-              {/* Password */}
-              <div>
-                <div className="flex items-center justify-between mb-1.5">
-                  <label className="block text-xs font-semibold text-[#A78BFA] uppercase tracking-wider">
-                    Password
+              {/* Login Form */}
+              <form onSubmit={handleSubmit} noValidate className="space-y-5">
+                {/* Email Address */}
+                <div>
+                  <label className="block text-xs font-semibold text-[#A78BFA] uppercase tracking-wider mb-1.5">
+                    Email Address
                   </label>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setForgotPasswordOpen(true)
-                      setServerError('')
-                    }}
-                    className="text-xs text-[#9490A8] hover:text-[#A78BFA] transition-colors cursor-pointer"
-                  >
-                    Forgot password?
-                  </button>
-                </div>
-                <div className="relative">
-                  <Lock className="w-4 h-4 text-[#9490A8] absolute left-3.5 top-1/2 -translate-y-1/2" />
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    name="password"
-                    disabled={isLoading}
-                    value={formData.password}
-                    onChange={(e) => {
-                      setFormData({ ...formData, password: e.target.value })
-                      if (errors.password) setErrors({ ...errors, password: null })
-                    }}
-                    placeholder="Enter your password"
-                    className={`w-full pl-10 pr-10 py-2.5 bg-[#101019] border rounded-xl text-white placeholder-[#9490A8]/50 focus:outline-none text-xs transition-colors disabled:opacity-50 ${
-                      errors.password
+                  <div className="relative">
+                    <Mail className="w-4 h-4 text-[#9490A8] absolute left-3.5 top-1/2 -translate-y-1/2" />
+                    <input
+                      type="email"
+                      name="email"
+                      disabled={isLoading}
+                      value={formData.email}
+                      onChange={(e) => {
+                        setFormData({ ...formData, email: e.target.value })
+                        if (errors.email) setErrors({ ...errors, email: null })
+                      }}
+                      placeholder="your.email@domain.com"
+                      className={`w-full pl-10 pr-4 py-2.5 bg-[#101019] border rounded-xl text-white placeholder-[#9490A8]/50 focus:outline-none text-xs transition-colors disabled:opacity-50 ${errors.email
                         ? 'border-rose-500/70 focus:border-rose-500'
                         : 'border-[#8B5CF6]/20 focus:border-[#8B5CF6]'
-                    }`}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9490A8] hover:text-[#F4F0FF] p-1 transition-colors cursor-pointer"
-                    aria-label={showPassword ? 'Hide password' : 'Show password'}
-                  >
-                    {showPassword ? (
-                      <EyeOff className="w-4 h-4" />
-                    ) : (
-                      <Eye className="w-4 h-4" />
-                    )}
-                  </button>
-                </div>
-                {errors.password && (
-                  <p className="text-[11px] text-rose-400 mt-1 flex items-center gap-1">
-                    <AlertCircle className="w-3 h-3 shrink-0" />
-                    {errors.password}
-                  </p>
-                )}
-              </div>
-
-              {/* Remember Me Checkbox */}
-              <div className="flex items-center">
-                <input
-                  id="remember-me"
-                  name="rememberMe"
-                  type="checkbox"
-                  disabled={isLoading}
-                  checked={formData.rememberMe}
-                  onChange={(e) =>
-                    setFormData({ ...formData, rememberMe: e.target.checked })
-                  }
-                  className="w-4 h-4 rounded bg-[#101019] border-[#8B5CF6]/30 text-[#8B5CF6] focus:ring-0 focus:ring-offset-0 cursor-pointer accent-[#8B5CF6]"
-                />
-                <label
-                  htmlFor="remember-me"
-                  className="ml-2.5 block text-xs text-[#9490A8] cursor-pointer select-none"
-                >
-                  Remember me on this device
-                </label>
-              </div>
-
-              {/* Server Error Message Feedback */}
-              {serverError && (
-                <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs flex items-start gap-2 animate-in fade-in duration-200">
-                  <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-                  <span>{serverError}</span>
-                </div>
-              )}
-
-              {/* Success Message Feedback */}
-              {successMessage && (
-                <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs flex items-center gap-2 animate-in fade-in duration-200">
-                  <CheckCircle2 className="w-4 h-4 shrink-0" />
-                  <span>{successMessage}</span>
-                </div>
-              )}
-
-              {/* Submit Button */}
-              <div className="pt-1">
-                <Button
-                  type="submit"
-                  variant="primary"
-                  size="md"
-                  disabled={isLoading}
-                  className="w-full justify-center"
-                >
-                  {isLoading ? (
-                    <span className="inline-flex items-center gap-2">
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      <span>Logging in...</span>
-                    </span>
-                  ) : (
-                    'Login'
+                        }`}
+                    />
+                  </div>
+                  {errors.email && (
+                    <p className="text-[11px] text-rose-400 mt-1 flex items-center gap-1">
+                      <AlertCircle className="w-3 h-3 shrink-0" />
+                      {errors.email}
+                    </p>
                   )}
-                </Button>
-              </div>
+                </div>
 
-              {/* Link to Sign Up */}
-              <div className="text-center pt-2">
-                <p className="text-xs text-[#9490A8]">
-                  Don't have an account?{' '}
-                  <button
-                    type="button"
-                    onClick={() => onNavigate('signup')}
-                    className="text-[#A78BFA] hover:text-white font-semibold transition-colors cursor-pointer"
+                {/* Password */}
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="block text-xs font-semibold text-[#A78BFA] uppercase tracking-wider">
+                      Password
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setForgotPasswordOpen(true)
+                        setServerError('')
+                      }}
+                      className="text-xs text-[#9490A8] hover:text-[#A78BFA] transition-colors cursor-pointer"
+                    >
+                      Forgot password?
+                    </button>
+                  </div>
+                  <div className="relative">
+                    <Lock className="w-4 h-4 text-[#9490A8] absolute left-3.5 top-1/2 -translate-y-1/2" />
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      name="password"
+                      disabled={isLoading}
+                      value={formData.password}
+                      onChange={(e) => {
+                        setFormData({ ...formData, password: e.target.value })
+                        if (errors.password) setErrors({ ...errors, password: null })
+                      }}
+                      placeholder="Enter your password"
+                      className={`w-full pl-10 pr-10 py-2.5 bg-[#101019] border rounded-xl text-white placeholder-[#9490A8]/50 focus:outline-none text-xs transition-colors disabled:opacity-50 ${errors.password
+                        ? 'border-rose-500/70 focus:border-rose-500'
+                        : 'border-[#8B5CF6]/20 focus:border-[#8B5CF6]'
+                        }`}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9490A8] hover:text-[#F4F0FF] p-1 transition-colors cursor-pointer"
+                      aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    >
+                      {showPassword ? (
+                        <EyeOff className="w-4 h-4" />
+                      ) : (
+                        <Eye className="w-4 h-4" />
+                      )}
+                    </button>
+                  </div>
+                  {errors.password && (
+                    <p className="text-[11px] text-rose-400 mt-1 flex items-center gap-1">
+                      <AlertCircle className="w-3 h-3 shrink-0" />
+                      {errors.password}
+                    </p>
+                  )}
+                </div>
+
+                {/* Remember Me Checkbox */}
+                <div className="flex items-center">
+                  <input
+                    id="remember-me"
+                    name="rememberMe"
+                    type="checkbox"
+                    disabled={isLoading}
+                    checked={formData.rememberMe}
+                    onChange={(e) =>
+                      setFormData({ ...formData, rememberMe: e.target.checked })
+                    }
+                    className="w-4 h-4 rounded bg-[#101019] border-[#8B5CF6]/30 text-[#8B5CF6] focus:ring-0 focus:ring-offset-0 cursor-pointer accent-[#8B5CF6]"
+                  />
+                  <label
+                    htmlFor="remember-me"
+                    className="ml-2.5 block text-xs text-[#9490A8] cursor-pointer select-none"
                   >
-                    Sign Up
-                  </button>
-                </p>
-              </div>
-            </form>
+                    Remember me on this device
+                  </label>
+                </div>
+
+                {/* Server Error Message Feedback */}
+                {serverError && (
+                  <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs flex items-start gap-2 animate-in fade-in duration-200">
+                    <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                    <span>{serverError}</span>
+                  </div>
+                )}
+
+                {/* Success Message Feedback */}
+                {successMessage && (
+                  <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs flex items-center gap-2 animate-in fade-in duration-200">
+                    <CheckCircle2 className="w-4 h-4 shrink-0" />
+                    <span>{successMessage}</span>
+                  </div>
+                )}
+
+                {/* Submit Button */}
+                <div className="pt-1">
+                  <Button
+                    type="submit"
+                    variant="primary"
+                    size="md"
+                    disabled={isLoading}
+                    className="w-full justify-center"
+                  >
+                    {isLoading ? (
+                      <span className="inline-flex items-center gap-2">
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span>Logging in...</span>
+                      </span>
+                    ) : (
+                      'Login'
+                    )}
+                  </Button>
+                </div>
+
+                {/* Link to Sign Up */}
+                <div className="text-center pt-2">
+                  <p className="text-xs text-[#9490A8]">
+                    Don't have an account?{' '}
+                    <button
+                      type="button"
+                      onClick={() => onNavigate('signup')}
+                      className="text-[#A78BFA] hover:text-white font-semibold transition-colors cursor-pointer"
+                    >
+                      Sign Up
+                    </button>
+                  </p>
+                </div>
+              </form>
+            </>
           )}
         </div>
       </div>
