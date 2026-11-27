@@ -12,10 +12,7 @@ import {
     Copy,
     Check,
     Wand2,
-    Crown,
 } from 'lucide-react'
-
-const FREE_AI_LIMIT = 3
 
 const COACH_PRESETS = [
     'Write a killer collaboration pitch for a music producer',
@@ -24,7 +21,7 @@ const COACH_PRESETS = [
     'Give me 3 portfolio project ideas to stand out in my field',
 ]
 
-export function AiStudioSection({ user, isPro, onNavigateTab, onOpenUpgrade }) {
+export function AiStudioSection({ user, onNavigateTab }) {
     const [mode, setMode] = useState('matchmaker')
     const [prompt, setPrompt] = useState('')
     const [loading, setLoading] = useState(false)
@@ -32,7 +29,6 @@ export function AiStudioSection({ user, isPro, onNavigateTab, onOpenUpgrade }) {
 
     const [creators, setCreators] = useState([])
     const [userProfile, setUserProfile] = useState(null)
-    const [aiUses, setAiUses] = useState(0)
 
     const [matchResult, setMatchResult] = useState(null)
     const [coachReply, setCoachReply] = useState('')
@@ -45,14 +41,13 @@ export function AiStudioSection({ user, isPro, onNavigateTab, onOpenUpgrade }) {
             const { data } = await supabase
                 .from('artist_profiles')
                 .select(
-                    'id, full_name, username, creative_field, experience_level, skills, bio, collaboration_interests, ai_uses_count'
+                    'id, full_name, username, creative_field, experience_level, skills, bio, collaboration_interests'
                 )
 
             if (!isMounted || !data) return
 
             const mine = data.find((p) => p.id === user?.id) || null
             setUserProfile(mine)
-            setAiUses(mine?.ai_uses_count || 0)
 
             const others = data.filter((p) => p.id !== user?.id)
             setCreators(others.length > 0 ? others : data)
@@ -68,11 +63,6 @@ export function AiStudioSection({ user, isPro, onNavigateTab, onOpenUpgrade }) {
         if (e) e.preventDefault()
         const activePrompt = (overridePrompt ?? prompt).trim()
         if (!activePrompt || loading) return
-
-        if (!isPro && aiUses >= FREE_AI_LIMIT) {
-            onOpenUpgrade()
-            return
-        }
 
         if (overridePrompt) setPrompt(overridePrompt)
         setLoading(true)
@@ -100,15 +90,6 @@ export function AiStudioSection({ user, isPro, onNavigateTab, onOpenUpgrade }) {
             } else {
                 setCoachReply(data.reply)
             }
-
-            const nextCount = aiUses + 1
-            setAiUses(nextCount)
-            if (user?.id) {
-                await supabase
-                    .from('artist_profiles')
-                    .update({ ai_uses_count: nextCount })
-                    .eq('id', user.id)
-            }
         } catch (err) {
             setError(err.message)
         } finally {
@@ -122,41 +103,19 @@ export function AiStudioSection({ user, isPro, onNavigateTab, onOpenUpgrade }) {
         setTimeout(() => setCopiedId(null), 2000)
     }
 
-    const remainingFree = Math.max(0, FREE_AI_LIMIT - aiUses)
-
     return (
         <div className="space-y-8">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#8B5CF6]/15">
-                <div>
-                    <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#8B5CF6]/15 border border-[#8B5CF6]/30 text-[11px] font-semibold text-[#A78BFA] mb-2">
-                        <Sparkles className="w-3 h-3" />
-                        <span>Powered by Gemini AI</span>
-                    </div>
-                    <h1 className="text-2xl sm:text-3xl font-extrabold text-white font-['Outfit']">
-                        ArtNova AI Studio
-                    </h1>
-                    <p className="text-xs sm:text-sm text-[#9490A8] mt-1">
-                        Find your ideal creative partner from the ArtNova directory or get instant project &amp; pitch guidance.
-                    </p>
+            <div className="pb-4 border-b border-[#8B5CF6]/15">
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#8B5CF6]/15 border border-[#8B5CF6]/30 text-[11px] font-semibold text-[#A78BFA] mb-2">
+                    <Sparkles className="w-3 h-3" />
+                    <span>Powered by Gemini AI</span>
                 </div>
-
-                {isPro ? (
-                    <div className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-500/15 border border-amber-400/30 text-xs font-bold text-amber-300 self-start">
-                        <Crown className="w-4 h-4" />
-                        <span>Unlimited Pro Access</span>
-                    </div>
-                ) : (
-                    <button
-                        type="button"
-                        onClick={onOpenUpgrade}
-                        className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#171725] border border-amber-400/30 hover:border-amber-400 text-xs font-semibold text-amber-300 transition-colors cursor-pointer self-start"
-                    >
-                        <Crown className="w-3.5 h-3.5" />
-                        <span>
-                            {remainingFree} of {FREE_AI_LIMIT} Free Runs Left · Upgrade
-                        </span>
-                    </button>
-                )}
+                <h1 className="text-2xl sm:text-3xl font-extrabold text-white font-['Outfit']">
+                    ArtNova AI Studio
+                </h1>
+                <p className="text-xs sm:text-sm text-[#9490A8] mt-1">
+                    Find your ideal creative partner from the ArtNova directory or get instant project &amp; pitch guidance.
+                </p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-1.5 rounded-2xl bg-[#171725] border border-[#8B5CF6]/20">
@@ -258,11 +217,9 @@ export function AiStudioSection({ user, isPro, onNavigateTab, onOpenUpgrade }) {
                     >
                         {loading
                             ? 'Thinking...'
-                            : !isPro && aiUses >= FREE_AI_LIMIT
-                                ? 'Unlock Unlimited AI'
-                                : mode === 'matchmaker'
-                                    ? 'Find Best Matches'
-                                    : 'Get Guidance'}
+                            : mode === 'matchmaker'
+                                ? 'Find Best Matches'
+                                : 'Get Guidance'}
                     </Button>
                 </div>
             </form>

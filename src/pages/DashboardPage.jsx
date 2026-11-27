@@ -103,7 +103,6 @@ export function DashboardPage({ user, onNavigate, onLogout }) {
           <span className="font-['Outfit'] font-bold text-sm text-[#F4F0FF]">
             ART<span className="text-[#A78BFA]">NOVA</span>
           </span>
-          <span className="text-xs text-[#9490A8] ml-2">/ Dashboard</span>
         </div>
 
         <button
@@ -199,7 +198,9 @@ export function DashboardPage({ user, onNavigate, onLogout }) {
               {userName.charAt(0)}
             </div>
             <div className="min-w-0 flex-1">
-              <span className="text-xs font-bold text-white truncate block">{userName}</span>
+              <span className="text-xs font-bold text-white truncate block">
+                {userName}
+              </span>
               <span className="text-[10px] text-[#9490A8] truncate block">{userEmail}</span>
             </div>
           </div>
@@ -358,10 +359,10 @@ export function DashboardPage({ user, onNavigate, onLogout }) {
               <Database className="w-5 h-5 text-[#8B5CF6] shrink-0 mt-0.5" />
               <div>
                 <span className="text-white font-semibold block mb-0.5">
-                  Phase 13: ArtNova AI Studio Active
+                  Full-Stack ArtNova Creator Platform Live
                 </span>
                 <span>
-                  AI Collaborator Matchmaking and Creative Guidance are live. Pro Subscriptions are up next in Phase 14.
+                  Profiles, Portfolio Cloud Storage, Artist Discovery, Opportunities, Collaborations, Direct Messaging, and Gemini AI Studio are all connected and active.
                 </span>
               </div>
             </div>
@@ -392,7 +393,7 @@ export function DashboardPage({ user, onNavigate, onLogout }) {
                   Account Settings
                 </h1>
                 <p className="text-xs text-[#9490A8] mt-1">
-                  Manage security and account preferences
+                  Manage your account details, security, and session preferences
                 </p>
               </div>
               <Button variant="ghost" size="sm" onClick={() => handleTabClick('overview')}>
