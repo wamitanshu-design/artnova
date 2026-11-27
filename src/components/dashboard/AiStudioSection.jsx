@@ -6,14 +6,16 @@ import {
     Bot,
     Sparkles,
     Users,
-    Send,
     MessageSquare,
     Loader2,
     AlertCircle,
     Copy,
     Check,
     Wand2,
+    Crown,
 } from 'lucide-react'
+
+const FREE_AI_LIMIT = 3
 
 const COACH_PRESETS = [
     'Write a killer collaboration pitch for a music producer',
@@ -22,7 +24,7 @@ const COACH_PRESETS = [
     'Give me 3 portfolio project ideas to stand out in my field',
 ]
 
-export function AiStudioSection({ user, onNavigateTab }) {
+export function AiStudioSection({ user, isPro, onNavigateTab, onOpenUpgrade }) {
     const [mode, setMode] = useState('matchmaker')
     const [prompt, setPrompt] = useState('')
     const [loading, setLoading] = useState(false)
@@ -30,6 +32,7 @@ export function AiStudioSection({ user, onNavigateTab }) {
 
     const [creators, setCreators] = useState([])
     const [userProfile, setUserProfile] = useState(null)
+    const [aiUses, setAiUses] = useState(0)
 
     const [matchResult, setMatchResult] = useState(null)
     const [coachReply, setCoachReply] = useState('')
@@ -42,14 +45,16 @@ export function AiStudioSection({ user, onNavigateTab }) {
             const { data } = await supabase
                 .from('artist_profiles')
                 .select(
-                    'id, full_name, username, creative_field, experience_level, skills, bio, collaboration_interests'
+                    'id, full_name, username, creative_field, experience_level, skills, bio, collaboration_interests, ai_uses_count'
                 )
 
             if (!isMounted || !data) return
 
-            setUserProfile(data.find((p) => p.id === user?.id) || null)
+            const mine = data.find((p) => p.id === user?.id) || null
+            setUserProfile(mine)
+            setAiUses(mine?.ai_uses_count || 0)
+
             const others = data.filter((p) => p.id !== user?.id)
-            // Fallback to all profiles if only 1 user exists so you can still test matchmaking
             setCreators(others.length > 0 ? others : data)
         }
 
@@ -63,6 +68,11 @@ export function AiStudioSection({ user, onNavigateTab }) {
         if (e) e.preventDefault()
         const activePrompt = (overridePrompt ?? prompt).trim()
         if (!activePrompt || loading) return
+
+        if (!isPro && aiUses >= FREE_AI_LIMIT) {
+            onOpenUpgrade()
+            return
+        }
 
         if (overridePrompt) setPrompt(overridePrompt)
         setLoading(true)
@@ -80,12 +90,6 @@ export function AiStudioSection({ user, onNavigateTab }) {
                 }),
             })
 
-            if (response.status === 404) {
-                throw new Error(
-                    'AI endpoint not active on standard localhost. Push to GitHub to use it on your live Vercel site (or run "npx vercel dev" locally).'
-                )
-            }
-
             const data = await response.json()
             if (!response.ok) {
                 throw new Error(data.error || 'Failed to get AI response.')
@@ -95,6 +99,15 @@ export function AiStudioSection({ user, onNavigateTab }) {
                 setMatchResult(data)
             } else {
                 setCoachReply(data.reply)
+            }
+
+            const nextCount = aiUses + 1
+            setAiUses(nextCount)
+            if (user?.id) {
+                await supabase
+                    .from('artist_profiles')
+                    .update({ ai_uses_count: nextCount })
+                    .eq('id', user.id)
             }
         } catch (err) {
             setError(err.message)
@@ -109,9 +122,10 @@ export function AiStudioSection({ user, onNavigateTab }) {
         setTimeout(() => setCopiedId(null), 2000)
     }
 
+    const remainingFree = Math.max(0, FREE_AI_LIMIT - aiUses)
+
     return (
         <div className="space-y-8">
-            {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#8B5CF6]/15">
                 <div>
                     <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#8B5CF6]/15 border border-[#8B5CF6]/30 text-[11px] font-semibold text-[#A78BFA] mb-2">
@@ -125,9 +139,26 @@ export function AiStudioSection({ user, onNavigateTab }) {
                         Find your ideal creative partner from the ArtNova directory or get instant project &amp; pitch guidance.
                     </p>
                 </div>
+
+                {isPro ? (
+                    <div className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-500/15 border border-amber-400/30 text-xs font-bold text-amber-300 self-start">
+                        <Crown className="w-4 h-4" />
+                        <span>Unlimited Pro Access</span>
+                    </div>
+                ) : (
+                    <button
+                        type="button"
+                        onClick={onOpenUpgrade}
+                        className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#171725] border border-amber-400/30 hover:border-amber-400 text-xs font-semibold text-amber-300 transition-colors cursor-pointer self-start"
+                    >
+                        <Crown className="w-3.5 h-3.5" />
+                        <span>
+                            {remainingFree} of {FREE_AI_LIMIT} Free Runs Left · Upgrade
+                        </span>
+                    </button>
+                )}
             </div>
 
-            {/* Mode Switcher */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-1.5 rounded-2xl bg-[#171725] border border-[#8B5CF6]/20">
                 <button
                     type="button"
@@ -174,7 +205,6 @@ export function AiStudioSection({ user, onNavigateTab }) {
                 </button>
             </div>
 
-            {/* Prompt Input Box */}
             <form
                 onSubmit={(e) => handleRunAi(e)}
                 className="p-6 rounded-2xl bg-[#171725] border border-[#8B5CF6]/25 space-y-4"
@@ -228,9 +258,11 @@ export function AiStudioSection({ user, onNavigateTab }) {
                     >
                         {loading
                             ? 'Thinking...'
-                            : mode === 'matchmaker'
-                                ? 'Find Best Matches'
-                                : 'Get Guidance'}
+                            : !isPro && aiUses >= FREE_AI_LIMIT
+                                ? 'Unlock Unlimited AI'
+                                : mode === 'matchmaker'
+                                    ? 'Find Best Matches'
+                                    : 'Get Guidance'}
                     </Button>
                 </div>
             </form>
@@ -242,7 +274,6 @@ export function AiStudioSection({ user, onNavigateTab }) {
                 </div>
             )}
 
-            {/* Matchmaker Output */}
             {mode === 'matchmaker' && matchResult && (
                 <div className="space-y-5">
                     <div className="p-4 rounded-2xl bg-[#8B5CF6]/10 border border-[#8B5CF6]/30 text-xs text-[#F4F0FF] leading-relaxed">
@@ -331,7 +362,6 @@ export function AiStudioSection({ user, onNavigateTab }) {
                 </div>
             )}
 
-            {/* Coach Output */}
             {mode === 'coach' && coachReply && (
                 <div className="p-6 sm:p-7 rounded-2xl bg-[#171725] border border-[#8B5CF6]/30 space-y-3">
                     <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#A78BFA]">

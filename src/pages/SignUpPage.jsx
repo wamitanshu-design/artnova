@@ -225,8 +225,8 @@ export function SignUpPage({ onNavigate }) {
               {resendStatus && (
                 <div
                   className={`p-3 rounded-xl text-xs ${resendStatus.startsWith('Error:')
-                      ? 'bg-rose-500/10 border border-rose-500/30 text-rose-400'
-                      : 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-400'
+                    ? 'bg-rose-500/10 border border-rose-500/30 text-rose-400'
+                    : 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-400'
                     }`}
                 >
                   {resendStatus}
@@ -320,8 +320,8 @@ export function SignUpPage({ onNavigate }) {
                       }}
                       placeholder="e.g. Alex Morgan"
                       className={`w-full pl-10 pr-4 py-2.5 bg-[#101019] border rounded-xl text-white placeholder-[#9490A8]/50 focus:outline-none text-xs transition-colors disabled:opacity-50 ${errors.fullName
-                          ? 'border-rose-500/70 focus:border-rose-500'
-                          : 'border-[#8B5CF6]/20 focus:border-[#8B5CF6]'
+                        ? 'border-rose-500/70 focus:border-rose-500'
+                        : 'border-[#8B5CF6]/20 focus:border-[#8B5CF6]'
                         }`}
                     />
                   </div>
@@ -351,8 +351,8 @@ export function SignUpPage({ onNavigate }) {
                       }}
                       placeholder="your.email@domain.com"
                       className={`w-full pl-10 pr-4 py-2.5 bg-[#101019] border rounded-xl text-white placeholder-[#9490A8]/50 focus:outline-none text-xs transition-colors disabled:opacity-50 ${errors.email
-                          ? 'border-rose-500/70 focus:border-rose-500'
-                          : 'border-[#8B5CF6]/20 focus:border-[#8B5CF6]'
+                        ? 'border-rose-500/70 focus:border-rose-500'
+                        : 'border-[#8B5CF6]/20 focus:border-[#8B5CF6]'
                         }`}
                     />
                   </div>
@@ -383,8 +383,8 @@ export function SignUpPage({ onNavigate }) {
                       }}
                       placeholder="At least 6 characters"
                       className={`w-full pl-10 pr-10 py-2.5 bg-[#101019] border rounded-xl text-white placeholder-[#9490A8]/50 focus:outline-none text-xs transition-colors disabled:opacity-50 ${errors.password
-                          ? 'border-rose-500/70 focus:border-rose-500'
-                          : 'border-[#8B5CF6]/20 focus:border-[#8B5CF6]'
+                        ? 'border-rose-500/70 focus:border-rose-500'
+                        : 'border-[#8B5CF6]/20 focus:border-[#8B5CF6]'
                         }`}
                     />
                     <button
@@ -430,8 +430,8 @@ export function SignUpPage({ onNavigate }) {
                       }}
                       placeholder="Re-enter your password"
                       className={`w-full pl-10 pr-10 py-2.5 bg-[#101019] border rounded-xl text-white placeholder-[#9490A8]/50 focus:outline-none text-xs transition-colors disabled:opacity-50 ${errors.confirmPassword
-                          ? 'border-rose-500/70 focus:border-rose-500'
-                          : 'border-[#8B5CF6]/20 focus:border-[#8B5CF6]'
+                        ? 'border-rose-500/70 focus:border-rose-500'
+                        : 'border-[#8B5CF6]/20 focus:border-[#8B5CF6]'
                         }`}
                     />
                     <button
